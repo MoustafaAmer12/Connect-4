@@ -1,4 +1,5 @@
-import Side
+from GUI_Controller.Side import Side
 
 class Player(Side):
-    pass
+    def __init__(self, color, sound):
+        super().__init__(color, sound)

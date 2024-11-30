@@ -1,18 +1,17 @@
 from Agents import Minmax, AlphaBeta, Expectiminmax
 
 class SolverFactory:
-    def __init__(self, max_depth: int, algorithm: str, heuristic:str):
+    def __init__(self, max_depth: int):
         self.max_depth = max_depth
-        self.heuristic = self.create_heuristic(heuristic)
-        self.solver = self.create_solver(algorithm)
     
-    def create_solver(self, algorithm: str):
+    def create_solver(self, algorithm: str, heuristic: str):
+        heuristic = self.create_heuristic(heuristic)
         if algorithm == "Minmax":
-            return Minmax(self.max_depth, self.heuristic)
+            return Minmax(self.max_depth, heuristic)
         elif algorithm == "Alpha-beta Pruning":
-            return AlphaBeta(self.max_depth, self.heuristic)
+            return AlphaBeta(self.max_depth, heuristic)
         elif algorithm == "Expectiminmax":
-            return Expectiminmax(self.max_depth, self.heuristic)
+            return Expectiminmax(self.max_depth, heuristic)
         else:
             raise ValueError("Algorithm Should be one of 3 defined values")
         
