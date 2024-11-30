@@ -138,7 +138,10 @@ while sum(next_play)!=-7:
 
     x=input("enter a column :")
     connect4_board[next_play[int(x)]][int(x)]='2'
+    index = next_play[int(x)] * 7 + int(x)
+    grid = grid[:index] + '2' + grid[index + 1:]
     next_play[int(x)]-=1
+
     for i in range(6):
         print(connect4_board[i])
 
