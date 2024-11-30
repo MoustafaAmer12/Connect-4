@@ -33,10 +33,13 @@ def get_score(grid):
         cell_score(grid,i,p1)
        elif grid[i]=='2':
          cell_score(grid,i,p2)
-    x=10
+    x=[1000,500,100]
+    heuristic=0
     for i in range(3):
-        print((p1[i]-p2[i]))
+       print(p1[i]-p2[i])
+       heuristic+=x[i]*(p1[i]-p2[i])
 
+    return heuristic
 
 def MakeTest(Grid):
     grid=""
@@ -47,12 +50,12 @@ def MakeTest(Grid):
     return grid
 
 connect4_board = [
-    [0, 0, 0, 0, 0, 0, 0],  # Row 1
-    [0, 0, 0, 0, 0, 0, 0],  # Row 2
-    [0, 0, 0, 1, 0, 0, 2],  # Row 3
-    [0, 0, 0, 1, 0, 0, 2],  # Row 4
-    [0, 0, 0, 1, 0, 0, 2],  # Row 5
-    [0, 0, 0, 1, 1, 2, 2]   # Row 6 (bottom row)
+    ['2', '1', '2', '1', '2', '2', '2'],
+    ['2', '2', '2', '1', '1', '1', '1'],
+    ['1', '1', '2', '1', '1', '2', '1'],
+    ['2', '2', '2', '2', '1', '1', '2'],
+    ['1', '1', '2', '2', '1', '1', '2'],
+    ['1', '1', '2', '2', '2', '1', '1']
 ]
 
 get_score(MakeTest(connect4_board))  # it must print 1 0 0   # it now prints 1 1 1
