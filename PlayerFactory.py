@@ -13,5 +13,3 @@ class PlayerFactory:
             if not solver:
                 raise ValueError("Solver is required for creating agent")
             return Agent(self.color, sound, solver)
-        
-    

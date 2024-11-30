@@ -54,6 +54,8 @@ class GamePawn(QWidget):
             super().mousePressEvent(event)
 
 class GameBoard(QWidget):
+    game_over = pyqtSignal()
+
     def __init__(self):
         super().__init__()
         
@@ -77,11 +79,13 @@ class GameBoard(QWidget):
         
         self.widgets = []
 
+        self.moves_left = 0
         self.currentState = [[1,0,0,2,0,2,1],[1,0,0,2,0,2,1],[1,0,0,2,0,2,1],[1,0,0,2,0,2,1],[1,0,0,2,0,2,1],[1,0,0,2,0,2,1]]
         for i in range(len(self.currentState)):
             row_widgets = []
             for j in range(len(self.currentState[i])):
                 color = "red" if self.currentState[i][j] == 1 else "yellow" if self.currentState[i][j] == 2 else "white"
+                self.moves_left += self.currentState[i][j] == 0
                 pawn = GamePawn(color, i, j, self)
                 pawn.setPalette(self.default_palette())
                 if isinstance(self.currentPlayer, Player): 
@@ -90,6 +94,8 @@ class GameBoard(QWidget):
                 layout.addWidget(pawn, i, j)
                 row_widgets.append(pawn)
             self.widgets.append(row_widgets)
+        
+        self.game_over.connect(self.end_game)
 
         self.setLayout(layout)
 
@@ -123,12 +129,29 @@ class GameBoard(QWidget):
                 self.currentState[i][col] = turn
                 self.widgets[i][col].set_color(self.currentPlayer.color)
                 self.currentPlayer.sound.play()
+                self.moves_left -= 1
+                if self.moves_left == 0:
+                    self.game_over.emit()
                 if turn == 1:
                     self.currentPlayer = self.player2
                 else:
                     self.currentPlayer = self.player1
                 return
 
+    def end_game(self):
+        dlg = QMessageBox(self)
+        dlg.setWindowTitle("Game Over")
+        dlg.setText("Player 1 Wins, Replay ?")
+        dlg.setStandardButtons(
+            QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.No
+        )
+        button = dlg.exec()
+
+        if button == QMessageBox.StandardButton.Yes:
+            print("OK!")
+        else:
+            print("NO")
+            
 class MainLayout(QHBoxLayout):
     def __init__(self):
         super().__init__()
