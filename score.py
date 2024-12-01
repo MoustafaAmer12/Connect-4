@@ -34,7 +34,7 @@ def get_score(grid):
     x=[1000,800,100]
     heuristic=0
     for i in range(3):
-       # print(p1[i]-p2[i])
+       #print(p1[i]-p2[i])
        heuristic+=x[i]*(p1[i]-p2[i])
 
     return heuristic
@@ -48,12 +48,11 @@ def MakeTest(Grid):
     return grid
 
 connect4_board = [
-    ['2', '1', '2', '2', '1', '2', '2'],
-    ['2', '1', '2', '1', '1', '2', '2'],
-    ['2', '2', '1', '1', '2', '1', '2'],
-    ['2', '1', '2', '1', '1', '1', '2'],
-    ['2', '1', '1', '1', '1', '1', '2'],
-    ['1', '2', '1', '2', '1', '1', '2']
+    ['1', '2', '1', '2', '1', '2', '2'],
+    ['1', '2', '2', '1', '1', '2', '1'],
+    ['2', '2', '2', '1', '2', '1', '1'],
+    ['1', '2', '2', '2', '1', '2', '1'],
+    ['2', '2', '1', '2', '1', '1', '1'],
+    ['1', '2', '2', '2', '1', '1', '1']
 ]
-
-get_score(MakeTest(connect4_board))  # it must print 1 0 0   # it now prints 1 1 1
+#print(get_score(MakeTest(connect4_board)))  # it must print 1 0 0   # it now prints 1 1 1
