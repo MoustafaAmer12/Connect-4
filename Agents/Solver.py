@@ -5,7 +5,9 @@ class Solver:
         self.state = "0"*42
         self.plays_av = [6] * 7
         self.neighbours = [3, 2, 4, 1, 5, 0, 6]
+        self.p1 = '1'
+        self.p2 = '2'
 
     # To Be Overriden
-    def play(self, counter):
+    def play(self):
         pass
