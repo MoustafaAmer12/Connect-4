@@ -1,6 +1,6 @@
 class Heuristic:
-    def __init__(self, state):
-        self.state = state
+    def __init__(self):
+        pass
 
-    def eval(self):
+    def eval(self, state):
         pass

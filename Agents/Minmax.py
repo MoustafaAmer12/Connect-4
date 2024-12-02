@@ -15,7 +15,7 @@ class Minmax(Solver):
     def minmax(self, counter, maximizer, state, av_moves):
         turn = sum(av_moves)
         if counter == self.max_depth or turn == 0:
-            return None, self.eval_heuristic()
+            return None, self.eval_heuristic(state)
         if turn % 2 == 0:
             player = self.p1
         else:
@@ -62,7 +62,7 @@ class Minmax(Solver):
 
 if __name__ == "__main__":
     st_time = datetime.now()
-    minmax = Minmax(9, heuristic=Heuristic_Lec("0"*42))
+    minmax = Minmax(7, heuristic=Heuristic_Lec())
     col, score = minmax.play()
     print(col)
     print((datetime.now() - st_time).total_seconds())

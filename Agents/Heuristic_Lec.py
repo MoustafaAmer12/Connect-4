@@ -1,9 +1,9 @@
 from Agents.Heuristic import Heuristic
 
 class Heuristic_Lec(Heuristic):
-    def __init__(self, state):
-        super().__init__(state)
-    
+    def __init__(self):
+        super().__init__()
+        
     @staticmethod
     def string_index(index):
         return index//7,index% 7
@@ -58,7 +58,8 @@ class Heuristic_Lec(Heuristic):
         self.score(i, p, 6,  self.state[i])  #diagonal_right
 
 
-    def eval(self):
+    def eval(self, state):
+        self.state = state
         p1=[0,0,0]
         p2=[0,0,0]
         for i in range(42):
@@ -93,5 +94,5 @@ if __name__ == '__main__':
         ['1', '2', '1', '2', '1', '1', '2']
     ]
 
-    heuristic = Heuristic_Lec(MakeTest(connect4_board))
-    print(heuristic.eval())
+    heuristic = Heuristic_Lec()
+    print(heuristic.eval(MakeTest(connect4_board)))
