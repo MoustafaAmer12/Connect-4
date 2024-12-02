@@ -4,11 +4,21 @@ import sys
 from datetime import datetime
 
 class Minmax(Solver):
+    count = 1
     def __init__(self, max_depth, heuristic):
         super().__init__(max_depth, heuristic)
 
     def play(self, state):
         self.state = state
+
+        for j in range(7):
+            self.plays_av[j] = 0
+            for i in range(6):
+                if self.state[j + 7 * i] != '0':
+                    break
+                self.plays_av[j] += 1
+        
+        print(self.plays_av)
         current_state = str(self.state)
         av_moves = list(self.plays_av)
         return self.minmax(0, True, current_state, av_moves)
@@ -55,6 +65,8 @@ class Minmax(Solver):
             return play_col, min_score
 
     def print_state(self, state):
+        print(self.count)
+        self.count += 1
         for i in range(6):
             for j in range(7):
                 print(state[j + 7 * i],end=" ")
@@ -64,8 +76,7 @@ class Minmax(Solver):
 if __name__ == "__main__":
     st_time = datetime.now()
     minmax = Minmax(8, heuristic=Heuristic_Lec())
-    col, score = minmax.play("0"*42)
+    game = [['0','0','1','1','1','0','0'], ['0','0','2','2','2','0','0'], ['0','0','1','1','1','0','0'], ['0','0','2','2','2','0','0'], ['0','0','1','1','1','0','0'], ['0','1','2','2','2','0','2']]
+    col, score = minmax.play("".join(str(game[i][j]) for i in range(len(game)) for j in range(len(game[0]))))
     print(col)
     print((datetime.now() - st_time).total_seconds())
-
-    

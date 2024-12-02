@@ -7,6 +7,7 @@ from PlayerFactory import PlayerFactory
 from GUI_Controller.Player import Player
 from GUI_Controller.Agent import Agent
 
+from datetime import datetime
 class Color(QWidget):
     def __init__(self, color):
         super().__init__()
@@ -55,19 +56,21 @@ class GamePawn(QWidget):
 
 class GameBoard(QWidget):
     game_over = pyqtSignal()
-
+    agent_turn = pyqtSignal()
     def __init__(self):
         super().__init__()
         
         # Create Players
         # Should be from main menu
         self.player1 = PlayerFactory("red", True).create_player("assets/sound1.wav")
-        self.player2 = PlayerFactory("yellow", True).create_player("assets/sound2.wav")
+        # self.player2 = PlayerFactory("yellow", True).create_player("assets/sound2.wav")
+        self.player2 = PlayerFactory("yellow", False).create_player("assets/sound2.wav", 7, "Minmax", "Lecture")
+
         self.currentPlayer = self.player1
         
         # Define Colors of Board
         self.setAutoFillBackground(True)
-        
+
         palette = self.palette()
         palette.setColor(QPalette.ColorRole.Window, QColor("navy"))
         self.setPalette(palette)
@@ -80,17 +83,16 @@ class GameBoard(QWidget):
         self.widgets = []
 
         self.moves_left = 0
-        self.currentState = [[1,0,0,2,0,2,1],[1,0,0,2,0,2,1],[1,0,0,2,0,2,1],[1,0,0,2,0,2,1],[1,0,0,2,0,2,1],[1,0,0,2,0,2,1]]
+        self.currentState = [['0','0','0','0','0','0','0'], ['0','0','0','0','0','0','0'], ['0','0','0','0','0','0','0'], ['0','0','0','0','0','0','0'], ['0','0','0','0','0','0','0'], ['0','0','0','0','0','0','0']]
         for i in range(len(self.currentState)):
             row_widgets = []
             for j in range(len(self.currentState[i])):
-                color = "red" if self.currentState[i][j] == 1 else "yellow" if self.currentState[i][j] == 2 else "white"
-                self.moves_left += self.currentState[i][j] == 0
+                color = "red" if self.currentState[i][j] == '1' else "yellow" if self.currentState[i][j] == '2' else "white"
+                self.moves_left += self.currentState[i][j] == '0'
                 pawn = GamePawn(color, i, j, self)
                 pawn.setPalette(self.default_palette())
-                if isinstance(self.currentPlayer, Player): 
-                    pawn.hovered.connect(self.on_hover)
-                    pawn.clicked.connect(self.on_click)
+                pawn.hovered.connect(self.on_hover)
+                pawn.clicked.connect(self.player_turn)
                 layout.addWidget(pawn, i, j)
                 row_widgets.append(pawn)
             self.widgets.append(row_widgets)
@@ -110,6 +112,8 @@ class GameBoard(QWidget):
         return palette
 
     def on_hover(self, col):
+        if isinstance(self.currentPlayer, Agent):
+            return
         if col == -1:
             for row_widgets in self.widgets:
                 for widget in row_widgets:
@@ -120,23 +124,62 @@ class GameBoard(QWidget):
                     if c == col:
                         self.widgets[r][c].setPalette(self.hover_palette())
 
-    def on_click(self, col):
-        if self.currentState[0][col] != 0:
+    def update_board(self, col):
+        if self.currentState[0][col] != '0':
             return
         for i in range(len(self.currentState) - 1, -1, -1):
-            if self.currentState[i][col] == 0:
+            if self.currentState[i][col] == '0':
                 turn = self.currentPlayer.turn
-                self.currentState[i][col] = turn
+                self.currentState[i][col] = str(turn)
                 self.widgets[i][col].set_color(self.currentPlayer.color)
                 self.currentPlayer.sound.play()
                 self.moves_left -= 1
-                if self.moves_left == 0:
-                    self.game_over.emit()
-                if turn == 1:
-                    self.currentPlayer = self.player2
-                else:
-                    self.currentPlayer = self.player1
-                return
+                break
+        
+    def player_turn(self, col):
+        if isinstance(self.currentPlayer, Agent):
+            return
+        
+        self.update_board(col)
+
+        if self.moves_left == 0:
+            self.game_over.emit()
+            return
+        
+        self.swap_turn()
+
+        if isinstance(self.currentPlayer, Agent):
+            QTimer.singleShot(1000, self.agent_play)
+    
+    def swap_turn(self):
+        turn = self.currentPlayer.turn
+        if turn == 1:
+            self.currentPlayer = self.player2
+        else:
+            self.currentPlayer = self.player1
+
+        if isinstance(self.currentPlayer, Agent):
+            for row_widgets in self.widgets:
+                for widget in row_widgets:
+                    widget.setPalette(self.default_palette())
+
+    def agent_play(self):
+        if isinstance(self.currentPlayer, Player):
+            return
+        
+        state = "".join(self.currentState[i][j] for i in range(len(self.currentState)) for j in range(len(self.currentState[0])))
+
+        st_time = datetime.now()
+        col, score = self.currentPlayer.solver.play(state)
+        print(f"Agent Chooses: {col}")
+        print((datetime.now() - st_time).total_seconds())
+        self.update_board(col)
+
+        if self.moves_left == 0:
+            self.game_over.emit()
+            return
+        
+        self.swap_turn()
 
     def end_game(self):
         dlg = QMessageBox(self)
