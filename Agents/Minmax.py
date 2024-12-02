@@ -7,7 +7,8 @@ class Minmax(Solver):
     def __init__(self, max_depth, heuristic):
         super().__init__(max_depth, heuristic)
 
-    def play(self):
+    def play(self, state):
+        self.state = state
         current_state = str(self.state)
         av_moves = list(self.plays_av)
         return self.minmax(0, True, current_state, av_moves)
@@ -33,8 +34,8 @@ class Minmax(Solver):
                 if score > max_score:
                     max_score = score
                     play_col = i
-            print("Score: ", max_score)
-            self.print_state(state)
+            # print("Score: ", max_score)
+            # self.print_state(state)
             return play_col, max_score
 
         else:
@@ -49,8 +50,8 @@ class Minmax(Solver):
                 if score < min_score:
                     min_score = score
                     play_col = i
-            print("Score: ", min_score)
-            self.print_state(state)
+            # print("Score: ", min_score)
+            # self.print_state(state)
             return play_col, min_score
 
     def print_state(self, state):
@@ -62,8 +63,8 @@ class Minmax(Solver):
 
 if __name__ == "__main__":
     st_time = datetime.now()
-    minmax = Minmax(7, heuristic=Heuristic_Lec())
-    col, score = minmax.play()
+    minmax = Minmax(8, heuristic=Heuristic_Lec())
+    col, score = minmax.play("0"*42)
     print(col)
     print((datetime.now() - st_time).total_seconds())
 

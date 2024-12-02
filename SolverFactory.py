@@ -1,4 +1,7 @@
-from Agents import Minmax, AlphaBeta, Expectiminmax
+from Agents.Minmax import Minmax
+from Agents.AlphaBeta import AlphaBeta
+from Agents.Expectiminmax import Expectiminmax
+from Agents.Heuristic_Lec import Heuristic_Lec
 
 class SolverFactory:
     def __init__(self, max_depth: int):
@@ -16,4 +19,7 @@ class SolverFactory:
             raise ValueError("Algorithm Should be one of 3 defined values")
         
     def create_heuristic(self, heuristic):
-        pass
+        if heuristic == "Lecture":
+            return Heuristic_Lec()
+        else:
+            raise ValueError("Heuristic is not available")
