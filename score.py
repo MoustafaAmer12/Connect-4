@@ -73,7 +73,7 @@ def get_score(grid):
        heuristic+=x[i]*(p1[i]-p2[i])
     return heuristic
 
-def MakeTest(Grid):
+def MakeState(Grid):
     grid=""
     for i in range(6):
         for j in range(7):
@@ -82,13 +82,13 @@ def MakeTest(Grid):
     return grid
 
 # connect4_board = [
-#     ['2', '2', '1', '1', '1', '1', '2'],
-#     ['1', '1', '1', '1', '1', '1', '2'],
-#     ['1', '2', '2', '1', '2', '2', '1'],
-#     ['2', '1', '2', '2', '2', '1', '2'],
-#     ['2', '1', '2', '2', '1', '2', '2'],
-#     ['2', '1', '1', '1', '1', '2', '2']
+#     ['2', '1', '1', '1', '1', '2', '2'],
+#     ['1', '2', '1', '1', '2', '1', '1'],
+#     ['1', '2', '2', '1', '1', '2', '2'],
+#     ['2', '1', '1', '2', '2', '1', '2'],
+#     ['2', '1', '1', '2', '1', '2', '2'],
+#     ['2', '2', '2', '1', '1', '2', '2']
 #
 # ]
-
-# print(get_score(MakeTest(connect4_board)))  # it must print 1 0 0   # it now prints 1 1 1
+#
+# print(get_score(MakeState(connect4_board)))  # it must print 1 0 0   # it now prints 1 1 1
