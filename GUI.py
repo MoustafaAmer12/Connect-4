@@ -62,9 +62,10 @@ class GameBoard(QWidget):
         
         # Create Players
         # Should be from main menu
+        # Player 1 Must Be the red color
         self.player1 = PlayerFactory("red", True).create_player("assets/sound1.wav")
         # self.player2 = PlayerFactory("yellow", True).create_player("assets/sound2.wav")
-        self.player2 = PlayerFactory("yellow", False).create_player("assets/sound2.wav", 7, "Minmax", "Lecture")
+        self.player2 = PlayerFactory("yellow", False).create_player("assets/sound2.wav", 3, "Minmax", "Lecture")
 
         self.currentPlayer = self.player1
         
@@ -74,7 +75,6 @@ class GameBoard(QWidget):
         palette = self.palette()
         palette.setColor(QPalette.ColorRole.Window, QColor("navy"))
         self.setPalette(palette)
-        
 
         # Create The Grid
         layout = QGridLayout()
@@ -99,6 +99,10 @@ class GameBoard(QWidget):
         
         self.game_over.connect(self.end_game)
 
+        if isinstance(self.player1, Agent):
+            QTimer.singleShot(1500, self.agent_play)
+
+        
         self.setLayout(layout)
 
     def default_palette(self):
@@ -167,11 +171,11 @@ class GameBoard(QWidget):
         if isinstance(self.currentPlayer, Player):
             return
         
-        state = "".join(self.currentState[i][j] for i in range(len(self.currentState)) for j in range(len(self.currentState[0])))
-
         st_time = datetime.now()
-        col, score = self.currentPlayer.solver.play(state)
+        col, self.game_score = self.currentPlayer.solver.play(self.currentState)
+
         print(f"Agent Chooses: {col}")
+        print(self.game_score)
         print((datetime.now() - st_time).total_seconds())
         self.update_board(col)
 
@@ -184,7 +188,17 @@ class GameBoard(QWidget):
     def end_game(self):
         dlg = QMessageBox(self)
         dlg.setWindowTitle("Game Over")
-        dlg.setText("Player 1 Wins, Replay ?")
+        
+        winner = ""
+        if self.game_score > 0:
+                winner = "Player 1: Red"
+        elif self.game_score < 0:
+                winner = "Player 2: Yellow"
+        else:
+            winner = "Draw"
+        
+        dlg_text = "Draw, Replay?" if winner == "Draw" else f"Winner {winner}, With Score {self.game_score/10000}, Replay?"
+        dlg.setText(dlg_text)
         dlg.setStandardButtons(
             QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.No
         )

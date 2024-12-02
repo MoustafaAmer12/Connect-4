@@ -4,4 +4,4 @@ from SolverFactory import SolverFactory
 class Agent(Side):
     def __init__(self, color, sound, depth, solver, heuristic):
         super().__init__(color, sound)
-        self.solver = SolverFactory(depth).create_solver(solver, heuristic)
+        self.solver = SolverFactory(depth, str(self.turn)).create_solver(solver, heuristic)
