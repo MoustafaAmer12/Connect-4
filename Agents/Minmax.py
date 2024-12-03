@@ -21,11 +21,9 @@ class Minmax(Solver):
                     break
                 self.plays_av[j] += 1
         
-        print(self.plays_av)
         current_state = str(self.state)
         av_moves = list(self.plays_av)
         maximizer = self.alg_player == '1'
-        print(maximizer)
         return self.minmax(0, maximizer, current_state, av_moves)
 
     def minmax(self, counter, maximizer, state, av_moves):
@@ -65,8 +63,7 @@ class Minmax(Solver):
                     node.value = max_score
             
             self.state_node_map[state] = [node.value, node]
-            print(node)
-            self.print_state(state)
+            # self.print_state(state)
             return play_col, node.value, node
 
         else:
@@ -85,8 +82,7 @@ class Minmax(Solver):
                     node.value = min_score
 
             self.state_node_map[state] = [node.value, node]
-            print(node)
-            self.print_state(state)
+            # self.print_state(state)
             return play_col, node.value, node
 
     def print_state(self, state):

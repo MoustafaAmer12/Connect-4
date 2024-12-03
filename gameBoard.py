@@ -3,11 +3,13 @@ from PyQt6.QtGui import *
 from PyQt6.QtCore import *
 from PyQt6.QtMultimedia import *
 
-from PlayerFactory import PlayerFactory
+from datetime import datetime
+
 from GUI_Controller.Player import Player
 from GUI_Controller.Agent import Agent
 
-from datetime import datetime
+from TreeGraphicsView import TreeGraphicsView
+
 class Color(QWidget):
     def __init__(self, color):
         super().__init__()
@@ -55,17 +57,14 @@ class GamePawn(QWidget):
             super().mousePressEvent(event)
 
 class GameBoard(QWidget):
+    root_node_updated = pyqtSignal(object)
     game_over = pyqtSignal()
     agent_turn = pyqtSignal()
+
     def __init__(self, p1, p2):
         super().__init__()
         self.player1 = p1
         self.player2 = p2
-
-        # Create Players
-        # Should be from main menu
-        # Player 1 Must Be the red color
-        # self.player1 = PlayerFactory("red", False).create_player("assets/sound2.wav", 4, "Expectiminmax", "Lecture")
 
         self.currentPlayer = self.player1
         
@@ -176,11 +175,12 @@ class GameBoard(QWidget):
         col = res[0]
         self.game_score = res[1]
         self.tree_node = res[2]
+        print(self.tree_node)
         print(f"Agent Chooses: {col}")
         print(self.game_score)
         print((datetime.now() - st_time).total_seconds())
         self.update_board(col)
-
+        self.root_node_updated.emit(self.tree_node)
         if self.moves_left == 0:
             self.game_over.emit()
             return
@@ -216,17 +216,18 @@ class MainLayout(QHBoxLayout):
         super().__init__()
         self.player1 = p1
         self.player2 = p2
-        
+        self.root_node = None
         self.setSpacing(10)
         self.setContentsMargins(10, 10, 10, 10)
         
         # First Widget Game Board
         self.gameBoard = GameBoard(self.player1, self.player2)
+        self.tree = TreeGraphicsView(self.root_node)
+        
+        self.gameBoard.root_node_updated.connect(self.tree.update_tree)
 
         self.addWidget(self.gameBoard, 6)
-
-        # Second Widget Game Tree
-        self.addWidget(Color("grey"), 4)
+        self.addWidget(self.tree, 6)
 
 class MainGame(QWidget):
     def __init__(self, p1, p2):

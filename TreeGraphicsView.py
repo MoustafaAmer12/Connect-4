@@ -1,76 +1,81 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QGraphicsScene, QGraphicsView, QGraphicsEllipseItem, QGraphicsTextItem
-from PyQt5.QtGui import QPen, QBrush, QColor, QPainter
-from PyQt5.QtCore import Qt
+from PyQt6.QtWidgets import *
+from PyQt6.QtGui import *
+from PyQt6.QtCore import *
+from PyQt6.QtMultimedia import *
 
-
-class TreeNode:
-    """Represents a node in the tree."""
-    def __init__(self, node_type, value=None):
-        self.node_type = node_type
-        self.value = value
-        self.children = []
-
+from Agents.Node import Node
 
 class TreeGraphicsView(QGraphicsView):
     def __init__(self, root_node):
         super().__init__()
         self.scene = QGraphicsScene()
         self.setScene(self.scene)
-        self.setRenderHint(QPainter.Antialiasing)
+        self.setRenderHint(QPainter.RenderHint.Antialiasing)
         self.draw_tree(root_node)
+        self.scale_factor = 1.1
+
+
+    def wheelEvent(self, event):
+        """Handle zoom in and zoom out using the mouse wheel."""
+        if event.angleDelta().y() > 0:
+            self.scale(self.scale_factor, self.scale_factor)  # Zoom in
+        else:
+            self.scale(1 / self.scale_factor, 1 / self.scale_factor)  # Zoom out
+
+
+    def update_tree(self, new_root_node):
+        self.root_node = new_root_node
+        self.scene.clear()
+        self.draw_tree(new_root_node)
 
     def draw_tree(self, root_node):
-        """Draws the tree starting from the root node using BFS for efficiency."""
-        pen = QPen(Qt.black)
+        if root_node is None:
+            return
+        pen = QPen(QColor("black"))
         pen.setWidth(2)
         node_radius = 25  # Radius of each node
         node_positions = {}  # Store calculated positions for nodes
-        level_widths = {}  # Track the number of nodes at each level
 
-        def calculate_positions():
-            """Calculate positions for all nodes using BFS."""
-            queue = [(root_node, 0, 0)]  # (node, level, index)
-            max_level = 0
+        horizontal_spacing = 80  # Horizontal spacing between nodes
+        vertical_spacing = 120  # Vertical spacing between levels
 
-            while queue:
-                node, level, index = queue.pop(0)
-                max_level = max(max_level, level)
+        def calculate_subtree_width(node):
+            """Recursively calculate the width of the subtree rooted at this node."""
+            if not node.children:
+                return 1
+            return sum(calculate_subtree_width(child) for child in node.children)
 
-                # Track the number of nodes per level
-                if level not in level_widths:
-                    level_widths[level] = 0
-                level_widths[level] += 1
+        def calculate_positions(node, x, y, total_width):
+            """Calculate positions for all nodes using DFS."""
+            subtree_width = calculate_subtree_width(node)
+            start_x = x - (subtree_width * horizontal_spacing) // 2  # Center subtree horizontally
+            node_positions[node] = (x, y)
 
-                x_spacing = 100  # Horizontal spacing
-                y_spacing = 100  # Vertical spacing
-                total_width = level_widths[level] * x_spacing
-                x_offset = 600 - total_width // 2  # Center nodes horizontally
+            offset_x = start_x
+            if node.children:
+                for child in node.children:
+                    child_width = calculate_subtree_width(child)
+                    calculate_positions(
+                        child,
+                        offset_x + (child_width * horizontal_spacing) // 2,
+                        y + vertical_spacing,
+                        total_width,
+                    )
+                    offset_x += child_width * horizontal_spacing
 
-                x = x_offset + index * x_spacing
-                y = level * y_spacing
-                node_positions[node] = (x, y)
-
-                # Enqueue children with updated level and index
-                for i, child in enumerate(node.children):
-                    queue.append((child, level + 1, level_widths[level] - 1))
-
-            return max_level
 
         def draw_node(node, x, y):
             """Draw a single node."""
             # Determine color based on node type
-            if node.node_type == "MAX":
-                color = QColor(220, 20, 60)  # Crimson
-            elif node.node_type == "MIN":
-                color = QColor(30, 144, 255)  # DodgerBlue
-            elif node.node_type == "EXPECTATION":
-                color = QColor(128, 128, 128)  # Gray
-            else:
-                color = QColor(240, 248, 255)  # AliceBlue
+            color = {
+                "MAX": QColor(220, 20, 60),  # Crimson
+                "MIN": QColor(30, 144, 255),  # DodgerBlue
+                "EXPECTATION": QColor(128, 128, 128),  # Gray
+            }.get(node.type, QColor(240, 248, 255))  # Default AliceBlue
 
             brush = QBrush(color)
-            ellipse = self.scene.addEllipse(
+            self.scene.addEllipse(
                 x - node_radius,
                 y - node_radius,
                 2 * node_radius,
@@ -80,23 +85,23 @@ class TreeGraphicsView(QGraphicsView):
             )
 
             # Add a label with the node type and value
-            label = f"{node.value}" if node.value is not None else node.node_type
+            label = f"{node.value}" if node.value is not None else node.type
             text = QGraphicsTextItem(label)
-            text.setDefaultTextColor(Qt.black)
+            text.setDefaultTextColor(QColor("black"))
             text.setPos(x - 15, y - 15)
             self.scene.addItem(text)
-            return ellipse
 
         def draw_edges():
             """Draw edges using stored positions."""
             for node, (x, y) in node_positions.items():
-                for child in node.children:
-                    if child in node_positions:
-                        child_x, child_y = node_positions[child]
-                        self.scene.addLine(x, y + node_radius, child_x, child_y - node_radius, pen)
+                if node.children:
+                    for child in node.children:
+                        if child in node_positions:
+                            child_x, child_y = node_positions[child]
+                            self.scene.addLine(x, y + node_radius, child_x, child_y - node_radius, pen)
 
         # Calculate positions and draw the tree
-        max_level = calculate_positions()
+        max_level = calculate_positions(root_node, 600, 50, 1200)
 
         # Draw nodes
         for node, (x, y) in node_positions.items():
@@ -104,33 +109,3 @@ class TreeGraphicsView(QGraphicsView):
 
         # Draw edges
         draw_edges()
-
-
-def generate_tree(levels):
-    """Generate a tree structure with exponential growth."""
-    root = TreeNode(node_type="MAX", value=0)
-    current_level = [root]
-
-    for level in range(1, levels):
-        next_level = []
-        node_type = "MIN" if level % 2 == 0 else "MAX"
-        for parent in current_level:
-            for _ in range(7):  # Each node has 7 children
-                child = TreeNode(node_type=node_type, value=level)
-                parent.children.append(child)
-                next_level.append(child)
-        current_level = next_level
-
-    return root
-
-
-if __name__ == "__main__":
-    # Generate tree with 6 levels
-    root_node = generate_tree(levels=7)
-
-    app = QApplication(sys.argv)
-    view = TreeGraphicsView(root_node)
-    view.setWindowTitle("Dynamic Tree Drawer")
-    view.resize(1200, 800)
-    view.show()
-    sys.exit(app.exec_())
