@@ -5,13 +5,13 @@ from Agents.Node import Node
 from Agents.Solver import Solver
 
 class Expectiminmax(Solver):
-    def __init__(self, max_depth, heuristic):
+    def __init__(self, max_depth, heuristic, alg_player):
         self.limit=max_depth
         self.grid = ""
         self.next_play = []
         self.eval_heuristic=heuristic.eval
         self.state_node_map={}    #map
-
+        self.alg_player = alg_player
 
 
     def make_state(self,grid,i,p):
@@ -180,8 +180,11 @@ class Expectiminmax(Solver):
 
         print(self.grid)
         print(self.next_play)
-
-        return self.maximize(1, self.grid)
+        maximizer = self.alg_player == '1'
+        if maximizer:
+            return self.maximize(1, self.grid)
+        else:
+            return self.minimize(1, self.grid)
 
 
 

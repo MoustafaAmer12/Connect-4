@@ -63,9 +63,9 @@ class GameBoard(QWidget):
         # Create Players
         # Should be from main menu
         # Player 1 Must Be the red color
-        self.player1 = PlayerFactory("red", True).create_player("assets/sound1.wav")
+        self.player2 = PlayerFactory("yellow", True).create_player("assets/sound1.wav")
         # self.player2 = PlayerFactory("yellow", True).create_player("assets/sound2.wav")
-        self.player2 = PlayerFactory("yellow", False).create_player("assets/sound2.wav", 3, "AlphaBeta", "Lecture")
+        self.player1 = PlayerFactory("red", False).create_player("assets/sound2.wav", 4, "Expectiminmax", "Lecture")
 
         self.currentPlayer = self.player1
         
@@ -172,8 +172,9 @@ class GameBoard(QWidget):
             return
         
         st_time = datetime.now()
-        col, self.game_score = self.currentPlayer.solver.play(self.currentState)
-
+        res = self.currentPlayer.solver.play(self.currentState)
+        col = res[0]
+        self.game_score = res[1]
         print(f"Agent Chooses: {col}")
         print(self.game_score)
         print((datetime.now() - st_time).total_seconds())
