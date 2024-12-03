@@ -65,7 +65,7 @@ class GameBoard(QWidget):
         # Player 1 Must Be the red color
         self.player1 = PlayerFactory("red", True).create_player("assets/sound1.wav")
         # self.player2 = PlayerFactory("yellow", True).create_player("assets/sound2.wav")
-        self.player2 = PlayerFactory("yellow", False).create_player("assets/sound2.wav", 3, "Minmax", "Lecture")
+        self.player2 = PlayerFactory("yellow", False).create_player("assets/sound2.wav", 3, "AlphaBeta", "Lecture")
 
         self.currentPlayer = self.player1
         
