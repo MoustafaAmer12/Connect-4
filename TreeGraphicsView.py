@@ -14,6 +14,15 @@ class TreeGraphicsView(QGraphicsView):
         self.setRenderHint(QPainter.RenderHint.Antialiasing)
         self.scale_factor = 1.1
 
+        self.setStyleSheet("""
+            border: 2px solid #333;
+            background-color: #c3c3c3;
+            border-top-left-radius: 40px;
+            border-top-right-radius: 40px;
+        """)
+        self.setMinimumHeight(400)
+        self.setMaximumHeight(600)
+
         self.draw_tree(root_node)
 
 

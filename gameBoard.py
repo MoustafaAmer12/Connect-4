@@ -60,6 +60,7 @@ class GameBoard(QWidget):
     root_node_updated = pyqtSignal(object)
     game_over = pyqtSignal()
     agent_turn = pyqtSignal()
+    swapped_turn = pyqtSignal(int, float)
 
     def __init__(self, p1, p2):
         super().__init__()
@@ -160,11 +161,15 @@ class GameBoard(QWidget):
             self.currentPlayer = self.player2
         else:
             self.currentPlayer = self.player1
+            
+        self.swapped_turn.emit(self.currentPlayer.turn, self.game_score)
 
         if isinstance(self.currentPlayer, Agent):
             for row_widgets in self.widgets:
                 for widget in row_widgets:
                     widget.setPalette(self.default_palette())
+
+
 
     def agent_play(self):
         if isinstance(self.currentPlayer, Player):
@@ -210,37 +215,90 @@ class GameBoard(QWidget):
         else:
             print("NO")
             
+
+class GameInfo(QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+
+        layout = QVBoxLayout()
+        self.setLayout(layout)
+
+        self.turn_label = QLabel("Turn: Player 1")
+        self.turn_label.setFont(QFont("Segoe UI", 16, QFont.Weight.Bold))
+        self.turn_label.setStyleSheet("color: red;")
+        layout.addWidget(self.turn_label)
+
+        self.score_label = QLabel("Score: 0")
+        self.score_label.setFont(QFont("Segoe UI", 14))
+        self.score_label.setStyleSheet("color: #4CAF50;")
+        layout.addWidget(self.score_label)
+
+    def update(self, turn: int, score: float):
+        self.update_turn(turn)
+        self.update_score(score)
+
+    def update_turn(self, turn: int):
+        if turn == 1:
+            self.turn_label.setText(f"Turn: Player 1")
+            self.turn_label.setStyleSheet("color: red;")
+        elif turn == 2:
+            self.turn_label.setText(f"Turn: Player 2")
+            self.turn_label.setStyleSheet("color: yellow;")
+
+    def update_score(self, score: float):
+        self.score_label.setText(
+            f"Game Score: {score}"
+        )
+        self.score_label.setStyleSheet("color: #4CAF50;")
+
 class MainLayout(QHBoxLayout):
-    def __init__(self, p1, p2):
+    def __init__(self, p1, p2, k):
         super().__init__()
         self.player1 = p1
         self.player2 = p2
+        self.k = k
+
+        self.turn = '1'
+        self.score = '0'
+
         self.root_node = None
         self.setSpacing(10)
         self.setContentsMargins(10, 10, 10, 10)
         
         # First Widget Game Board
         self.gameBoard = GameBoard(self.player1, self.player2)
-        self.tree = TreeGraphicsView(self.root_node)
-        
-        self.gameBoard.root_node_updated.connect(self.tree.update_tree)
+        self.gameInfo = GameInfo()
+
+        self.gameBoard.swapped_turn.connect(self.gameInfo.update)
+
+        widget = QWidget()
+        layout = QVBoxLayout()
+        layout.addWidget(self.gameInfo)
+        if self.k <= 4:
+            self.tree = TreeGraphicsView(self.root_node)
+            layout.addWidget(self.tree)
+            self.gameBoard.root_node_updated.connect(self.tree.update_tree)
+
+        widget.setLayout(layout)
+
 
         self.addWidget(self.gameBoard, 6)
-        self.addWidget(self.tree, 6)
+        self.addWidget(widget, 6)
 
 class MainGame(QWidget):
-    def __init__(self, p1, p2):
+    def __init__(self, p1, p2, k):
         super().__init__()
         self.player1 = p1
         self.player2 = p2
-        
+        self.k = k
+
         screen = QApplication.primaryScreen()
         screen_geometry = screen.availableGeometry()
         
-        width = int(screen_geometry.width() * 0.75)
-        height = int(screen_geometry.height() * 0.85)
+        width = int(screen_geometry.width() * 0.8)
+        height = int(screen_geometry.height() * 0.9)
 
         self.setMinimumSize(width, height)
-        layout = MainLayout(self.player1, self.player2)
+        layout = MainLayout(self.player1, self.player2, self.k)
 
         self.setLayout(layout)

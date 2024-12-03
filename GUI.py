@@ -22,8 +22,8 @@ class GameMenu(QMainWindow):
         screen = QApplication.primaryScreen()
         screen_geometry = screen.availableGeometry()
         
-        width = int(screen_geometry.width() * 0.75)
-        height = int(screen_geometry.height() * 0.85)
+        width = int(screen_geometry.width() * 0.8)
+        height = int(screen_geometry.height() * 0.9)
         self.resize(width, height)
         x = int((screen_geometry.width() - width) / 2)
         y = int((screen_geometry.height() - height) / 2)
@@ -91,7 +91,7 @@ class GameMenu(QMainWindow):
         title.setStyleSheet("font-size: 18px; font-weight: bold; margin: 10px; color: #000000;")
 
         # Mode buttons
-        modes = ["Human vs Human", "Agent vs Human" ]# , "Agent vs Agent"]
+        modes = ["Agent vs Human" ]# ,"Human vs Human", "Agent vs Agent"]
         for mode in modes:
             btn = QPushButton(mode)
             btn.setFixedHeight(40)
@@ -200,7 +200,7 @@ class GameMenu(QMainWindow):
         self.initialize_main_game()
 
     def initialize_main_game(self):
-        self.main_game = MainGame(self.player1, self.player2)
+        self.main_game = MainGame(self.player1, self.player2, self.k_parameter)
         self.stacked_widget.addWidget(self.main_game)
         self.stacked_widget.setCurrentWidget(self.main_game)
         
