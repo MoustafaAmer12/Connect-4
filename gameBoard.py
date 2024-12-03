@@ -57,15 +57,15 @@ class GamePawn(QWidget):
 class GameBoard(QWidget):
     game_over = pyqtSignal()
     agent_turn = pyqtSignal()
-    def __init__(self):
+    def __init__(self, p1, p2):
         super().__init__()
-        
+        self.player1 = p1
+        self.player2 = p2
+
         # Create Players
         # Should be from main menu
         # Player 1 Must Be the red color
-        self.player2 = PlayerFactory("yellow", True).create_player("assets/sound1.wav")
-        # self.player2 = PlayerFactory("yellow", True).create_player("assets/sound2.wav")
-        self.player1 = PlayerFactory("red", False).create_player("assets/sound2.wav", 4, "Expectiminmax", "Lecture")
+        # self.player1 = PlayerFactory("red", False).create_player("assets/sound2.wav", 4, "Expectiminmax", "Lecture")
 
         self.currentPlayer = self.player1
         
@@ -211,45 +211,27 @@ class GameBoard(QWidget):
             print("NO")
             
 class MainLayout(QHBoxLayout):
-    def __init__(self):
+    def __init__(self, p1, p2):
         super().__init__()
+        self.player1 = p1
+        self.player2 = p2
+        
         self.setSpacing(20)
-
+        
         # First Widget Game Board
-        self.gameBoard = GameBoard()
+        self.gameBoard = GameBoard(self.player1, self.player2)
 
         self.addWidget(self.gameBoard, 6)
 
         # Second Widget Game Tree
         self.addWidget(Color("grey"), 4)
 
-class MainWindow(QMainWindow):
-    def __init__(self):
+class MainGame(QWidget):
+    def __init__(self, p1, p2):
         super().__init__()
-
-        self.setWindowTitle("Connect - 4")
-
-        screen = QApplication.primaryScreen()
-        screen_geometry = screen.availableGeometry()
+        self.player1 = p1
+        self.player2 = p2
         
-        width = int(screen_geometry.width() * 0.75)
-        height = int(screen_geometry.height() * 0.85)
-        self.resize(width, height)
+        layout = MainLayout(self.player1, self.player2)
 
-        x = int((screen_geometry.width() - width) / 2)
-        y = int((screen_geometry.height() - height) / 2)
-        self.move(x, y)
-        
-        layout = MainLayout()
-
-        widget = QWidget()
-        widget.setLayout(layout)
-
-        self.setCentralWidget(widget)
-
-app = QApplication([])
-
-window = MainWindow()
-window.show()
-
-app.exec()
+        self.setLayout(layout)
