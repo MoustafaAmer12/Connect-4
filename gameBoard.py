@@ -216,7 +216,8 @@ class MainLayout(QHBoxLayout):
         self.player1 = p1
         self.player2 = p2
         
-        self.setSpacing(20)
+        self.setSpacing(10)
+        self.setContentsMargins(10, 10, 10, 10)
         
         # First Widget Game Board
         self.gameBoard = GameBoard(self.player1, self.player2)
@@ -232,6 +233,13 @@ class MainGame(QWidget):
         self.player1 = p1
         self.player2 = p2
         
+        screen = QApplication.primaryScreen()
+        screen_geometry = screen.availableGeometry()
+        
+        width = int(screen_geometry.width() * 0.75)
+        height = int(screen_geometry.height() * 0.85)
+
+        self.setMinimumSize(width, height)
         layout = MainLayout(self.player1, self.player2)
 
         self.setLayout(layout)
