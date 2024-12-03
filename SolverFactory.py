@@ -12,7 +12,7 @@ class SolverFactory:
         heuristic = self.create_heuristic(heuristic)
         if algorithm == "Minmax":
             return Minmax(self.max_depth, heuristic, self.alg_player)
-        elif algorithm == "Alpha-beta Pruning":
+        elif algorithm == "AlphaBeta":
             return AlphaBeta(self.max_depth, heuristic, self.alg_player)
         elif algorithm == "Expectiminmax":
             return Expectiminmax(self.max_depth, heuristic, self.alg_player)

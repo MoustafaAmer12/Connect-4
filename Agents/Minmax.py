@@ -47,8 +47,6 @@ class Minmax(Solver):
                 if score > max_score:
                     max_score = score
                     play_col = i
-            print("Score: ", max_score)
-            self.print_state(state)
             return play_col, max_score
 
         else:
@@ -63,8 +61,6 @@ class Minmax(Solver):
                 if score < min_score:
                     min_score = score
                     play_col = i
-            print("Score: ", min_score)
-            self.print_state(state)
             return play_col, min_score
 
     def print_state(self, state):
