@@ -40,10 +40,11 @@ class TreeGraphicsView(QGraphicsView):
         self.draw_tree(new_root_node)
 
 
-    def draw_tree(self, root_node):
-        """Draws the tree starting from the root node using BFS for efficiency."""
+    def draw_tree(self, root_node, max_level=3):
+        """Draws the tree starting from the root node using BFS for efficiency, limited by max_level."""
         if not root_node:
             return
+
         pen = QPen(QColor("black"))
         pen.setWidth(2)
         node_radius = 25  # Radius of each node
@@ -54,21 +55,23 @@ class TreeGraphicsView(QGraphicsView):
 
         def calculate_subtree_width(node):
             """Recursively calculate the width of the subtree rooted at this node."""
-            if not node.children:
+            if not node.children or getattr(node, 'level', 0) >= max_level:
                 return 1
             return sum(calculate_subtree_width(child) for child in node.children)
 
-        def calculate_positions(node, x, y, total_width):
-            """Calculate positions for all nodes using DFS."""
+        def calculate_positions(node, x, y, total_width, current_level):
+            """Calculate positions for all nodes using DFS, limited by max_level."""
+            if current_level > max_level:
+                return
             subtree_width = calculate_subtree_width(node)
             start_x = x - (subtree_width * horizontal_spacing) // 2  # Center subtree horizontally
             node_positions[node] = (x, y)
 
             offset_x = start_x
-            if node.children:
+            if node.children and current_level < max_level:
                 for child in node.children:
                     child_width = calculate_subtree_width(child)
-                    calculate_positions(child, offset_x + (child_width * horizontal_spacing) // 2, y + vertical_spacing, total_width)
+                    calculate_positions(child, offset_x + (child_width * horizontal_spacing) // 2, y + vertical_spacing, total_width, current_level + 1)
                     offset_x += child_width * horizontal_spacing
 
         def draw_node(node, x, y):
@@ -106,8 +109,8 @@ class TreeGraphicsView(QGraphicsView):
                             child_x, child_y = node_positions[child]
                             self.scene.addLine(x, y + node_radius, child_x, child_y - node_radius, pen)
 
-
-        calculate_positions(root_node, 600, 50, 1200)
+        # Start calculation and drawing
+        calculate_positions(root_node, 600, 50, 1200, current_level=1)
         for node, (x, y) in node_positions.items():
             draw_node(node, x, y)
         draw_edges()

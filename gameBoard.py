@@ -201,12 +201,15 @@ class GameBoard(QWidget):
         winner = ""
         if self.game_score > 0:
                 winner = "Player 1: Red"
+                score = self.s1 - self.s2
         elif self.game_score < 0:
                 winner = "Player 2: Yellow"
+                score = self.s2 - self.s1
         else:
             winner = "Draw"
+            score = 0
         
-        dlg_text = "Draw, Replay?" if winner == "Draw" else f"Winner {winner}, With Score {self.game_score/10000}, Replay?"
+        dlg_text = "Draw, Replay?" if winner == "Draw" else f"Winner {winner}, With Score {score}, Replay?"
         dlg.setText(dlg_text)
         dlg.setStandardButtons(
             QMessageBox.StandardButton.Ok | QMessageBox.StandardButton.No
@@ -277,10 +280,10 @@ class MainLayout(QHBoxLayout):
         widget = QWidget()
         layout = QVBoxLayout()
         layout.addWidget(self.gameInfo)
-        if self.k <= 4:
-            self.tree = TreeGraphicsView(self.root_node)
-            layout.addWidget(self.tree)
-            self.gameBoard.root_node_updated.connect(self.tree.update_tree)
+        # if self.k <= 4:
+        self.tree = TreeGraphicsView(self.root_node)
+        layout.addWidget(self.tree)
+        self.gameBoard.root_node_updated.connect(self.tree.update_tree)
 
         widget.setLayout(layout)
 
