@@ -195,12 +195,6 @@ class GameMenu(QMainWindow):
         self.k_parameter = self.k2_spinbox.value()
         if self.selected_mode == "Agent vs Human":
             self.player1 = self.player1.create_player("assets/sound1.wav", self.k_parameter, self.selected_algorithm, "Lecture") 
-        print(f"""
-            Game Settings:
-            Mode: {self.selected_mode}
-            Algorithm: {self.selected_algorithm}
-            K Parameter: {self.k_parameter}
-        """)
 
         # Link To Game
         self.initialize_main_game()

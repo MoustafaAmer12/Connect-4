@@ -175,7 +175,6 @@ class GameBoard(QWidget):
         col = res[0]
         self.game_score = res[1]
         self.tree_node = res[2]
-        print(self.tree_node)
         print(f"Agent Chooses: {col}")
         print(self.game_score)
         print((datetime.now() - st_time).total_seconds())

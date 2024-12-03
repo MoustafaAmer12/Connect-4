@@ -63,7 +63,6 @@ class Minmax(Solver):
                     node.value = max_score
             
             self.state_node_map[state] = [node.value, node]
-            # self.print_state(state)
             return play_col, node.value, node
 
         else:
@@ -82,7 +81,6 @@ class Minmax(Solver):
                     node.value = min_score
 
             self.state_node_map[state] = [node.value, node]
-            # self.print_state(state)
             return play_col, node.value, node
 
     def print_state(self, state):

@@ -25,9 +25,7 @@ class AlphaBeta(Solver):
                     break
                 self.plays_av[j] += 1
         
-        print("Available moves per column:", self.plays_av)
         maximizer = self.alg_player == '1'
-        print("Maximizer:", maximizer)
         return self.minmax(0, maximizer, self.state, self.plays_av[:])  # Pass a copy of plays_av
 
     def minmax(self, counter, maximizer, state, av_moves, alpha=-sys.maxsize, beta=sys.maxsize):
@@ -72,8 +70,6 @@ class AlphaBeta(Solver):
                     break
 
             self.state_node_map[state] = [node.value, node]
-            print("Maximizer Score:", max_score)
-            self.print_state(state)
             return play_col, node.value, node
 
         else:
@@ -101,8 +97,6 @@ class AlphaBeta(Solver):
                     break
 
             self.state_node_map[state] = [node.value, node]
-            print("Minimizer Score:", min_score)
-            self.print_state(state)
             return play_col, node.value, node
 
     def print_state(self, state):

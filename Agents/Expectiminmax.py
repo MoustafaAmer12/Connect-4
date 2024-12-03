@@ -178,8 +178,6 @@ class Expectiminmax(Solver):
                     self.next_play[j] = max(self.next_play[j], i)
                 self.grid += currentState[i][j]
 
-        print(self.grid)
-        print(self.next_play)
         maximizer = self.alg_player == '1'
         if maximizer:
             return self.maximize(1, self.grid)
