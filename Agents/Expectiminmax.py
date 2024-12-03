@@ -28,7 +28,7 @@ class Expectiminmax(Solver):
         node=Node()
         node.type = "MAX"
         if self.limit-counter==0:
-            node.value=self.eval_heuristic(state)
+            node.value, _, _=self.eval_heuristic(state)
             node.children=None
             self.state_node_map[state]=[node.value,node]
             return None,node.value,node
@@ -54,7 +54,7 @@ class Expectiminmax(Solver):
            else:
                fail_count+=1
         if fail_count==7:
-            node.value = self.eval_heuristic(state)
+            node.value, _, _ = self.eval_heuristic(state)
             self.state_node_map[state] = [node.value, node]
             return None, node.value, node
         self.state_node_map[state] = [node.value, node]
@@ -68,7 +68,7 @@ class Expectiminmax(Solver):
         node = Node()
         node.type = "MIN"
         if self.limit - counter == 0:
-            node.value = self.eval_heuristic(state)
+            node.value, _, _ = self.eval_heuristic(state)
             node.children = None
             self.state_node_map[state] = [node.value, node]
             return None, node.value, node
@@ -94,7 +94,7 @@ class Expectiminmax(Solver):
                fail_count+=1
 
         if fail_count==7:
-            node.value=self.eval_heuristic(state)
+            node.value, _, _=self.eval_heuristic(state)
             self.state_node_map[state] = [node.value, node]
             return None,node.value,node
         self.state_node_map[state] = [node.value, node]
@@ -108,7 +108,7 @@ class Expectiminmax(Solver):
         node = Node()
         node.type = "EXPECTATION"
         if self.limit - counter == 0:
-            node.value = self.eval_heuristic(state)
+            node.value, _, _ = self.eval_heuristic(state)
             node.children = None
             self.state_node_map[state] = [node.value, node]
             return node.value, node

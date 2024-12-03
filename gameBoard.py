@@ -60,7 +60,7 @@ class GameBoard(QWidget):
     root_node_updated = pyqtSignal(object)
     game_over = pyqtSignal()
     agent_turn = pyqtSignal()
-    swapped_turn = pyqtSignal(int, float)
+    swapped_turn = pyqtSignal(int, int, int)
 
     def __init__(self, p1, p2):
         super().__init__()
@@ -162,7 +162,7 @@ class GameBoard(QWidget):
         else:
             self.currentPlayer = self.player1
             
-        self.swapped_turn.emit(self.currentPlayer.turn, self.game_score)
+        self.swapped_turn.emit(self.currentPlayer.turn, self.s1, self.s2)
 
         if isinstance(self.currentPlayer, Agent):
             for row_widgets in self.widgets:
@@ -184,6 +184,9 @@ class GameBoard(QWidget):
         print("Game Score: ", self.game_score)
         print("Time Elased: ", (datetime.now() - st_time).total_seconds())
         self.update_board(col)
+ 
+        _, self.s1, self.s2 = self.currentPlayer.solver.eval_heuristic("".join(self.currentState[i][j] for i in range(len(self.currentState)) for j in range(len(self.currentState[0]))))
+ 
         self.root_node_updated.emit(self.tree_node)
         if self.moves_left == 0:
             self.game_over.emit()
@@ -228,14 +231,14 @@ class GameInfo(QWidget):
         self.turn_label.setStyleSheet("color: red;")
         layout.addWidget(self.turn_label)
 
-        self.score_label = QLabel("Score: 0")
+        self.score_label = QLabel(f"Game Score:\nPlayer 1: {0}\nPlayer 2: {0}\n")
         self.score_label.setFont(QFont("Segoe UI", 14))
         self.score_label.setStyleSheet("color: #4CAF50;")
         layout.addWidget(self.score_label)
 
-    def update(self, turn: int, score: float):
+    def update(self, turn: int, s1: int, s2: int):
         self.update_turn(turn)
-        self.update_score(score)
+        self.update_score(s1, s2)
 
     def update_turn(self, turn: int):
         if turn == 1:
@@ -245,9 +248,9 @@ class GameInfo(QWidget):
             self.turn_label.setText(f"Turn: Player 2")
             self.turn_label.setStyleSheet("color: yellow;")
 
-    def update_score(self, score: float):
+    def update_score(self, s1, s2):
         self.score_label.setText(
-            f"Game Score: {score}"
+            f"Game Score:\nPlayer 1: {s1}\nPlayer 2: {s2}\n"
         )
         self.score_label.setStyleSheet("color: #4CAF50;")
 

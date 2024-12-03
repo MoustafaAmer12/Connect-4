@@ -117,7 +117,7 @@ class GameMenu(QMainWindow):
             "Minmax",
             "AlphaBeta",
             "Expectiminmax"
-        ])
+        ]) 
         self.algorithm_combo.setFixedHeight(35)
 
         next_btn = QPushButton("Next")

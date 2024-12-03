@@ -36,7 +36,7 @@ class Minmax(Solver):
         
         turn = sum(av_moves)
         if counter == self.max_depth or turn == 0:
-            node.value = self.eval_heuristic(state)
+            node.value, _, _ = self.eval_heuristic(state)
             node.children=None
             self.state_node_map[state]=[node.value, node]
             return None, node.value, node

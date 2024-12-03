@@ -74,8 +74,7 @@ class Heuristic_Lec(Heuristic):
         for i in range(3):
             heuristic += x[i]*(p1[i]-p2[i])
 
-        return heuristic
-
+        return heuristic, p1[0], p2[0]
 
 if __name__ == '__main__':
     def MakeTest(grid):
