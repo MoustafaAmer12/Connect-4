@@ -209,6 +209,7 @@ class GameMenu(QMainWindow):
         self.main_game = MainGame(self.player1, self.player2)
         self.stacked_widget.addWidget(self.main_game)
         self.stacked_widget.setCurrentWidget(self.main_game)
+        
 def main():
     app = QApplication(sys.argv)
     window = GameMenu()
