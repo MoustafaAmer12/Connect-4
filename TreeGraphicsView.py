@@ -18,7 +18,15 @@ class TreeGraphicsView(QGraphicsView):
         self.scene = QGraphicsScene()
         self.setScene(self.scene)
         self.setRenderHint(QPainter.Antialiasing)
+        self.scale_factor = 1.1  # Factor for zooming in and out
         self.draw_tree(root_node)
+
+    def wheelEvent(self, event):
+        """Handle zoom in and zoom out using the mouse wheel."""
+        if event.angleDelta().y() > 0:
+            self.scale(self.scale_factor, self.scale_factor)  # Zoom in
+        else:
+            self.scale(1 / self.scale_factor, 1 / self.scale_factor)  # Zoom out
 
     def draw_tree(self, root_node):
         """Draws the tree starting from the root node."""
@@ -26,6 +34,9 @@ class TreeGraphicsView(QGraphicsView):
         pen.setWidth(2)
         node_radius = 25  # Radius of each node
         node_positions = {}  # Store calculated positions for nodes
+
+        horizontal_spacing = 80  # Horizontal spacing between nodes
+        vertical_spacing = 120  # Vertical spacing between levels
 
         def calculate_subtree_width(node):
             """Recursively calculate the width of the subtree rooted at this node."""
@@ -36,7 +47,7 @@ class TreeGraphicsView(QGraphicsView):
         def calculate_positions(node, x, y, total_width):
             """Calculate positions for all nodes using DFS."""
             subtree_width = calculate_subtree_width(node)
-            start_x = x - (subtree_width * 50) // 2  # Center subtree horizontally
+            start_x = x - (subtree_width * horizontal_spacing) // 2  # Center subtree horizontally
             node_positions[node] = (x, y)
 
             offset_x = start_x
@@ -44,11 +55,11 @@ class TreeGraphicsView(QGraphicsView):
                 child_width = calculate_subtree_width(child)
                 calculate_positions(
                     child,
-                    offset_x + (child_width * 50) // 2,
-                    y + 100,
+                    offset_x + (child_width * horizontal_spacing) // 2,
+                    y + vertical_spacing,
                     total_width,
                 )
-                offset_x += child_width * 50
+                offset_x += child_width * horizontal_spacing
 
         def draw_node(node, x, y):
             """Draw a single node."""
@@ -100,7 +111,7 @@ def generate_tree(levels):
         next_level = []
         node_type = "MIN" if level % 2 == 0 else "MAX"
         for parent in current_level:
-            for _ in range(7):  # Reduce the number of children per node
+            for _ in range(7):
                 child = TreeNode(node_type=node_type, value=level)
                 parent.children.append(child)
                 next_level.append(child)
@@ -110,7 +121,7 @@ def generate_tree(levels):
 
 
 if __name__ == "__main__":
-    # Generate tree with 6 levels
+    # Generate tree with 5 levels
     root_node = generate_tree(levels=5)
 
     app = QApplication(sys.argv)
