@@ -43,8 +43,8 @@ class Expectiminmax(Solver):
 
         maxEvaluation = -1000000  # large negative
         fail_count=0
-        for i in range(7):
-           if self.next_play[i]!=-1:
+        for i in range(7): # Modify It
+           if self.next_play[i] != -1:
                 heuristic=self.chance(counter+1,state,i)
                 node.children.append(heuristic[1])
                 if heuristic[0] > maxEvaluation:
