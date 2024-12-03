@@ -181,8 +181,8 @@ class GameBoard(QWidget):
         self.game_score = res[1]
         self.tree_node = res[2]
         print(f"Agent Chooses: {col}")
-        print(self.game_score)
-        print((datetime.now() - st_time).total_seconds())
+        print("Game Score: ", self.game_score)
+        print("Time Elased: ", (datetime.now() - st_time).total_seconds())
         self.update_board(col)
         self.root_node_updated.emit(self.tree_node)
         if self.moves_left == 0:

@@ -29,6 +29,7 @@ class Minmax(Solver):
     def minmax(self, counter, maximizer, state, av_moves):
         if(self.state_node_map.__contains__(state)):
             return None, self.state_node_map[state][0], self.state_node_map[state][1]
+        self.print_count_expanded(state)
         
         node=Node()
         node.type = "MAX" if maximizer else "MIN"
@@ -83,8 +84,8 @@ class Minmax(Solver):
             self.state_node_map[state] = [node.value, node]
             return play_col, node.value, node
 
-    def print_state(self, state):
-        print(self.counter)
+    def print_count_expanded(self, state):
+        print("State Count:", self.counter)
         self.counter += 1
         for i in range(6):
             for j in range(7):

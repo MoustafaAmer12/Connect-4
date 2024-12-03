@@ -31,7 +31,7 @@ class AlphaBeta(Solver):
     def minmax(self, counter, maximizer, state, av_moves, alpha=-sys.maxsize, beta=sys.maxsize):
         if(self.state_node_map.__contains__(state)):
             return None, self.state_node_map[state][0], self.state_node_map[state][1]
-        
+        self.print_count_expanded(state)
         node=Node()
         node.type = "MAX" if maximizer else "MIN"
 
@@ -99,7 +99,7 @@ class AlphaBeta(Solver):
             self.state_node_map[state] = [node.value, node]
             return play_col, node.value, node
 
-    def print_state(self, state):
+    def print_count_expanded(self, state):
         print("State Count:", self.count)
         self.count += 1
         for i in range(6):
@@ -118,6 +118,7 @@ if __name__ == "__main__":
             ['0', '0', '0', '0', '0', '0', '0'],
             ['0', '0', '0', '0', '0', '0', '0'],
             ['0', '0', '0', '0', '0', '0', '0']]
+    
     col, score, node = minmax.play(game)
     print("Chosen Column:", col)
     print("Execution Time:", (datetime.now() - st_time).total_seconds())

@@ -116,7 +116,7 @@ class GameMenu(QMainWindow):
         self.algorithm_combo.addItems([
             "Minmax",
             "AlphaBeta",
-            "ExpectiminMax"
+            "Expectiminmax"
         ])
         self.algorithm_combo.setFixedHeight(35)
 
